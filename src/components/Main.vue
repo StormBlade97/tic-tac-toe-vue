@@ -5,25 +5,32 @@
         <div class="container">
           <p class="title has-text-centered">Tic • Tac • Toe</p>
           <div class="level main-section">
-            <div class="level-item"></div>
             <div class="level-item">
-              <div class="tic-tac-toe box">
-                <div v-for="(row, i) of array" :key="i">
-                  <div
-                    @click.once="mark(j, i)"
-                    :class="{
-                      'has-background-primary has-text-white': cell,
-                      'has-background-light': !cell
-                    }"
-                    class="cell"
-                    v-for="(cell, j) of row"
-                    :key="j"
-                  >
-                    <box-icon
-                      class="mark"
-                      v-show="cell"
-                      name="down-arrow"
-                    ></box-icon>
+              <div>
+                <p class="title is-5" v-if="winner">
+                  <strong class="is-size-3 has-text-success">{{
+                    winner
+                  }}</strong>
+                  is the winner!
+                </p>
+                <div class="tic-tac-toe">
+                  <div v-for="(row, i) of array" :key="i">
+                    <div
+                      @click.once="mark(j, i)"
+                      :class="{
+                        'has-background-primary has-text-white': cell,
+                        'has-background-light': !cell
+                      }"
+                      class="cell"
+                      v-for="(cell, j) of row"
+                      :key="j"
+                    >
+                      <box-icon
+                        class="mark"
+                        v-show="cell"
+                        name="down-arrow"
+                      ></box-icon>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -35,6 +42,8 @@
   </div>
 </template>
 <script>
+import { checkWin, mark } from "@/game";
+
 function genArr(width, height) {
   let accumulate = [];
   for (let i = 0; i < height; i++) {
@@ -57,8 +66,12 @@ export default {
   },
   methods: {
     mark(posX, posY) {
-      const spliceY = this.array[posY].splice(posX, 1, "x");
-      this.array.splice(posY, 1, spliceY);
+      this.array = mark(this.array, { y: posY, x: posX }, "o");
+    }
+  },
+  computed: {
+    winner() {
+      return checkWin(this.array, 3);
     }
   }
 };
